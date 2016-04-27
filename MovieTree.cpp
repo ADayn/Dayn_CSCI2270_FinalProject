@@ -24,8 +24,43 @@ movieTree::movieTree() {
   root = NULL;
 }
 
-void addRB(std::string, int, int, int) {
-  
+/* Checks if a movie by the name given is in the tree
+ * if it is not, adds the movie to the tree, where it
+ * belongs alphabeticaly
+ */
+void movieTree::addRB(std::string initTitle, int initRank, int initYear, int initNum) {
+  movie * newMovie = new movie(initTitle, initRank, initYear, initNum, root);
+  // Add new root, color black
+  if(!root) {
+    root = newMovie;
+    newMovie->red = false;
+    return;
+  }
+  movie * tmp = root;
+  // Keep going until end of path is hit
+  while(tmp) {
+    // If initTitle comes after tmp->title go right
+    if(initTitle.compare(tmp->title) > 0) {
+      newMovie->parent = tmp;
+      tmp = tmp->right;
+    }
+    // If initTitle comes before tmp->title go left
+    else if (initTitle.compare(tmp->title) < 0) {
+      newMovie->parent = tmp;
+      tmp = tmp->left;
+    }
+    // else, initTitle = tmp-> title, so movie is already in tree
+    else {
+      std::cout<<"Movie \""<<initTitle<<"\" already in database"<<std::endl;
+      delete newMovie;
+      return;
+    }
+  }
+  if (initTitle.compare(newMovie->parent->title) > 0) {
+    newMovie->parent->right = newMovie;
+  }
+  else newMovie->parent->left = newMovie;
+  return;
 }
 
 /* movieTree Destructor
@@ -652,9 +687,11 @@ void movieTree::printTree(){
   delete[] lvl;
 }
 
-void movieTree::leftRotate(movie * x){
+void movieTree::leftRotate(std::string mov){
+  movie * x = search(mov);
   if (!x || !x->right){
-    // Throw runtime exception
+    // TODO Throw runtime exception
+    std::cout << "Movie not found" << std::endl;
   }
   movie * y = x->right;
   if (x == root){
@@ -663,9 +700,11 @@ void movieTree::leftRotate(movie * x){
 
 }
 
-void movieTree::rightRotate(movie * x){
+void movieTree::rightRotate(std::string mov){
+  movie * x = search(mov);
   if (!x || !x->left){
-    // Throw runtime exception
+    // TODO Throw runtime exception
+    std::cout << "Movie not found" << std::endl;
   }
   movie * y = x->left;
   if (x == root){
