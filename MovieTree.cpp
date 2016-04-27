@@ -687,27 +687,65 @@ void movieTree::printTree(){
   delete[] lvl;
 }
 
+
 void movieTree::leftRotate(std::string mov){
   movie * x = search(mov);
-  if (!x || !x->right){
+  if (!x){
     // TODO Throw runtime exception
     std::cout << "Movie not found" << std::endl;
+    return;
+  }
+  if (!x->right){
+    // TODO Throw runtime exception
+    std::cout << "No movie to right of " + mov + "\nCan't rotate." << std::endl;
+    return;
   }
   movie * y = x->right;
   if (x == root){
     root = y;
   }
-
+  else if(x->parent->left == x) {
+    x->parent->left = y;
+  }
+  else {
+    x->parent->right = y;
+  }
+  x->right = y->left;
+  if(y->left) {
+    y->left->parent = x;
+  }
+  y->left = x;
+  y->parent = x->parent;
+  x->parent = y;
 }
 
 void movieTree::rightRotate(std::string mov){
   movie * x = search(mov);
-  if (!x || !x->left){
+  if (!x){
     // TODO Throw runtime exception
     std::cout << "Movie not found" << std::endl;
+    return;
+  }
+  if (!x->left){
+    // TODO Throw runtime exception
+    std::cout << "No movie to right of " + mov + "\nCan't rotate." << std::endl;
+    return;
   }
   movie * y = x->left;
   if (x == root){
     root = y;
   }
+  else if(x->parent->left == x) {
+    x->parent->left = y;
+  }
+  else {
+    x->parent->right = y;
+  }
+  x->left = y->right;
+  if(y->right) {
+    y->right->parent = x;
+  }
+  y->right = x;
+  y->parent = x->parent;
+  x->parent = y;
 }
