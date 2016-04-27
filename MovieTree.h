@@ -20,8 +20,12 @@ struct movie {
   movie * parent;
   movie * left;
   movie * right;
+  bool red;
+  bool isRed() {return red;}
+  bool isBlack() {return !red;}
   movie() {};
   movie(std::string initTitle, int initRank, int initYear, int initNum, movie * initParent = NULL, movie * initLeft = NULL, movie * initRight = NULL) {
+    red = true;
     title = initTitle;
     rank = initRank;
     year = initYear;
@@ -45,12 +49,10 @@ class movieTree {
     void addRB(std::string, int, int, int);
     void LOT();
     void printTree();
-    void leftRotate();
-    void rightRotate();
+    void leftRotate(std::string movie);
+    void rightRotate(std::string movie);
   protected:
   private:
-    void leftRotatePriv(movie *);
-    void rightRotatePriv(movie *);
     void printInfo(movie *);
     movie * search(std::string);
     std::tuple<int, std::string, int> ntos(movie *);
