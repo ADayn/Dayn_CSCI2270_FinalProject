@@ -1,5 +1,5 @@
 # Dayn_CSCI2270_FinalProject
-This is my final project for the CSCI 2270 - Data Structures class. It will be a binary tree-learning program, which shows students how a binary tree is implemented and formed. It will have both a red-black tree inplementation and a regular BST implementation.
+This is my final project for the CSCI 2270 - Data Structures class. It will be a binary tree-learning program, which shows students how a binary tree is implemented and formed. It will have both a red-black tree inplementation and a regular BST implementation. It builds on Assignment 7. For the tree print function to work properly, make sure you either try to print a small tree, or make the font on the terminal small while making the window take up the entire screen.
 
 Memebers: Albert Dayn
 
