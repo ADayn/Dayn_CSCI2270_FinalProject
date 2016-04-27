@@ -9,12 +9,8 @@
 
 int numOptions;
 
-void showMenu(bool dev) {
-  std::vector<std::string> optionList = {"Find a movie", "Rent a movie", "Print the inventory", "Delete a movie", "Count the movies", "Quit"};
-  if(dev){
-    optionList.push_back("LOT");
-    optionList.push_back("ASCII Print");
-  }
+void showMenu() {
+  std::vector<std::string> optionList = {"Find a movie", "Rent a movie", "Print the inventory", "Delete a movie", "Count the movies", "Add a movie (Red-Black)", "Add a movie (regular)", "LOT", "ASCII Print", "Left rotate movie", "Right rotate movie", "Quit"};
   std::cout<<"======Main Menu======"<<std::endl;
   // Fill numOptions with the number of options in optionList
   numOptions = optionList.size();
@@ -39,24 +35,24 @@ void showMenu(bool dev) {
 // Comment everything
 int main(int argc, char * argv[]){
   // default file name to "Assignment6Movies.txt"
-  bool dev = false;
+  bool rb = false;
   std::string file = "Assignment6Movies.txt";
   if (argc == 2){
-    if(strcmp(argv[1], "-d") == 0){
-      dev = true;
+    if(strcmp(argv[1], "-rb") == 0){
+      rb = true;
     }
     else{
       file = argv[1];
     }
   }
   else if (argc == 3){
-    if (strcmp(argv[1], "-d") == 0){
+    if (strcmp(argv[1], "-rb") == 0){
       file = argv[2];
-      dev = true;
+      rb = true;
     }
-    else if (strcmp(argv[2], "-d") == 0){
+    else if (strcmp(argv[2], "-rb") == 0){
       file = argv[1];
-      dev = true;
+      rb = true;
     }
     else {
       std::cout<<"Error in command line arguments, using defaults"<<std::endl;
@@ -64,7 +60,7 @@ int main(int argc, char * argv[]){
   }
   else if (argc > 3){
     std::cout<<"Usage:\n";
-    std::cout<<" Call with no arguments to default to the file \"Assignment6Movies.txt\", or with one command line argument of the name of the file to parse\n";
+    std::cout<<" Call with no arguments to default to the file \"Assignment6Movies.txt\", with one command line argument of the name of the file to parse, and add \"-rb\" to build the initial tree using a red black tree algorithm.\n";
     std::cout<<" ~$"<<argv[0]<<" MovieDatabaseFile.txt"<<std::endl;
     return -1;
   }
@@ -96,7 +92,12 @@ int main(int argc, char * argv[]){
         std::cout<<"Movie \""<<title<<"\" has malformed input, number in inventory must be 0 or greater (line "<<i<<")\nExiting"<<std::endl;
         return -1;
       }
-      movieDatabase.add(title, std::stoi(rank), std::stoi(year), std::stoi(num));
+      if(rb) {
+        movieDatabase.addRB(title, std::stoi(rank), std::stoi(year), std::stoi(num));
+      }
+      else {
+          movieDatabase.add(title, std::stoi(rank), std::stoi(year), std::stoi(num));
+        }
     }
     catch(std::invalid_argument& e){
       std::cout<<"Malformed database file (line "<<i<<"):\n";
@@ -110,9 +111,10 @@ int main(int argc, char * argv[]){
   int option = 0;
   bool running = true;
   std::cin.exceptions(std::ifstream::failbit|std::ifstream::badbit);
+  tryAgain:
   try{
     while(running) {
-      showMenu(dev);
+      showMenu();
       do{
         option = getInt();
         if (option < 1 || option > numOptions) std::cout<<"Enter a number between 1 and "<<numOptions<<":"<<std::endl;
@@ -150,18 +152,58 @@ int main(int argc, char * argv[]){
         break;
 
         case 6:
-        // Quit
-        goto quit;
+        // Add a movie (RB)
+        std::cout<<"Enter title:"<<std::endl;
+        std::getline(std::cin, title);
+        std::cout << "Enter year:" << std::endl;
+        std::getline(std::cin, year);
+        std::cout<<"Enter rank:"<<std::endl;
+        std::getline(std::cin, rank);
+        std::cout << "Enter inventory:" << std::endl;
+        std::getline(std::cin, num);
+        movieDatabase.addRB(title, std::stoi(year), std::stoi(rank), std::stoi(num));
+        break;
 
         case 7:
+        // Add a movie
+        std::cout<<"Enter title:"<<std::endl;
+        std::getline(std::cin, title);
+        std::cout << "Enter year:" << std::endl;
+        std::getline(std::cin, year);
+        std::cout<<"Enter rank:"<<std::endl;
+        std::getline(std::cin, rank);
+        std::cout << "Enter inventory:" << std::endl;
+        std::getline(std::cin, num);
+        movieDatabase.add(title, std::stoi(year), std::stoi(rank), std::stoi(num));
+        break;
+
+        case 8:
         // LOT
         movieDatabase.LOT();
         break;
 
-        case 8:
+        case 9:
         // ASCII print
         movieDatabase.printTree();
         break;
+
+        case 10:
+        // Left rotate
+        std::cout<<"Enter title:"<<std::endl;
+        std::getline(std::cin, title);
+        movieDatabase.leftRotate(title);
+        break;
+
+        case 11:
+        // Right rotate
+        std::cout<<"Enter title:"<<std::endl;
+        std::getline(std::cin, title);
+        movieDatabase.rightRotate(title);
+        break;
+
+        case 12:
+        // Quit
+        goto quit;
 
         default:
         std::cout<<"ERROR:\nReceived option: "<<option<<" (not an option)"<< std::endl;
@@ -171,6 +213,10 @@ int main(int argc, char * argv[]){
   }
   catch (std::ifstream::failure e){
     std::cerr<<"Error recieved: "<<e.what()<<std::endl;
+  }
+  catch(std::invalid_argument& e){
+    std::cout<<"Invalid number recieved for year, rank, or Inventory\n";
+    goto tryAgain;
   }
   quit:
   std::cout<<"Goodbye!"<<std::endl;
